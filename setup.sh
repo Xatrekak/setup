@@ -38,4 +38,4 @@ sudo mount /mnt/nas
 
 echo 'file:///mnt/nas' >> /home/dustin/.config/gtk-3.0/bookmarks
 
-cp /mnt/nas/firefox/places.sqlite ~/.mozilla/firefox/bysvtelr.default-release/places.sqlite
+cp /mnt/nas/firefox/* ~/.mozilla/firefox/bysvtelr.default-release/*
