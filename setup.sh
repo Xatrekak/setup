@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
-array=( https://extensions.gnome.org/extension/307/dash-to-dock/ )
+array=( https://extensions.gnome.org/extension/307/dash-to-dock/
+https://extensions.gnome.org/extension/517/caffeine/ )
 
 for i in "${array[@]}"
 do
