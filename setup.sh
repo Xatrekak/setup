@@ -17,6 +17,7 @@ done
 
 gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
 gsettings set org.gnome.shell favorite-apps ['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'firefox.desktop', 'com.visualstudio.code.desktop', 'com.discordapp.Discord.desktop', 'org.gnome.Software.desktop']
+gsettings set org.gnome.nautilus.preferences always-use-location-entry true
 
 wget https://addons.mozilla.org/firefox/downloads/file/4198829/ublock_origin-latest.xpi
 wget https://addons.mozilla.org/firefox/downloads/file/4208799/lastpass_password_manager-latest.xpi
@@ -38,4 +39,10 @@ sudo mount /mnt/nas
 
 echo 'file:///mnt/nas' >> /home/dustin/.config/gtk-3.0/bookmarks
 
-cp /mnt/nas/firefox/* ~/.mozilla/firefox/bysvtelr.default-release/*
+cp /mnt/nas/firefox/places.sqlite ~/.mozilla/firefox/bysvtelr.default-release/places.sqlite
+
+flatpak install flathub com.visualstudio.code
+touch /home/dustin/.var/app/com.visualstudio.code/config/electron-flags.conf
+
+echo "--enable-features=UseOzonePlatform,WaylandWindowDecorations" >> /home/dustin/.var/app/com.visualstudio.code/config/electron-flags.conf
+echo "--ozone-platform=wayland" >> /home/dustin/.var/app/com.visualstudio.code/config/electron-flags.conf
