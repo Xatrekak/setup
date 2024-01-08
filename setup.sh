@@ -38,6 +38,9 @@ sudo bash -c "echo '192.168.1.81:/mnt/tank/dustin    /mnt/nas    nfs    defaults
 sudo systemctl daemon-reload
 sudo mount /mnt/nas
 
+#Setup gnome shell
+ gsettings set org.gnome.desktop.interface enable-hot-corners false
+
 #Setup gnome file browser
 gsettings set org.gnome.nautilus.preferences always-use-location-entry true
 echo 'file:///mnt/nas' >> ~/.config/gtk-3.0/bookmarks
@@ -76,3 +79,10 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/caffeine\@patapon.in
 #Create symlink to libnvidia-ml.so.1 so t-rex miner can access NVML to monitor GPU
 sudo ln -s /usr/lib/libnvidia-ml.so.1 /usr/lib/libnvidia-ml.so
 sudo ln -s /usr/lib64/libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so
+
+#audio setup
+# `pactl list short sinks` to get the output names for sink
+# `pactl list short sources` to get the input names for source
+sudo dnf install -y pactl
+pactl set-default-sink alsa_output.usb-Schiit_Audio_Schiit_Modi_-00.analog-stereo
+pactl set-default-source alsa_input.usb-Blue_Microphones_Yeti_Stereo_Microphone_REV8-00.analog-stereo.2
