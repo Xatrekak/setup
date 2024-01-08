@@ -1,9 +1,12 @@
 #!/usr/bin/bash
 
-#install missing user gnome extensions
+#Install dependencies for gnome extensions
+sudo dnf install -y ddcutil
+#install user gnome extensions
 array=( https://extensions.gnome.org/extension/307/dash-to-dock/
 https://extensions.gnome.org/extension/517/caffeine/
-https://extensions.gnome.org/extension/4362/fullscreen-avoider/ )
+https://extensions.gnome.org/extension/4362/fullscreen-avoider/
+https://extensions.gnome.org/extension/6325/control-monitor-brightness-and-volume-with-ddcutil/ )
 
 for i in "${array[@]}"
 do
