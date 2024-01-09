@@ -60,6 +60,7 @@ flatpak install flathub com.visualstudio.code
 touch ~/.var/app/com.visualstudio.code/config/electron-flags.conf
 echo "--enable-features=UseOzonePlatform,WaylandWindowDecorations" >> ~/.var/app/com.visualstudio.code/config/electron-flags.conf
 echo "--ozone-platform=wayland" >> ~/.var/app/com.visualstudio.code/config/electron-flags.conf
+flatpak install flathub com.microsoft.Edge
 
 #Enable and setup system gnome extensions 
 gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
