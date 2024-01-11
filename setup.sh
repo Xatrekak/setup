@@ -27,9 +27,11 @@ wget https://addons.mozilla.org/firefox/downloads/file/4198829/ublock_origin-lat
 wget https://addons.mozilla.org/firefox/downloads/file/4208799/lastpass_password_manager-latest.xpi
 wget https://addons.mozilla.org/firefox/downloads/file/4215671/betterttv-latest.xpi
 wget https://addons.mozilla.org/firefox/downloads/file/3848032/nighttab-latest.xpi
+wget https://addons.mozilla.org/firefox/downloads/file/4219481/load_reddit_images_directly-latest.xpi
 firefox ublock_origin-latest.xpi
 firefox lastpass_password_manager-latest.xpi
 firefox betterttv-latest.xpi
+firefox load_reddit_images_directly-latest.xpi
 wget -P ~/Downloads https://raw.githubusercontent.com/Xatrekak/wallpaperRD/main/nighttab_backup.json
 firefox nighttab-latest.xpi
 rm *.xpi
