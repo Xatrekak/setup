@@ -58,15 +58,22 @@ echo file://$HOME/Projects >> ~/.config/gtk-3.0/bookmarks
 cp /mnt/nas/firefox/places.sqlite ~/.mozilla/firefox/bysvtelr.default-release/places.sqlite
 
 #install and setup flatpaks
-flatpak install flathub com.visualstudio.code
+flatpak install flathub com.visualstudio.code --noninteractive --user
 touch ~/.var/app/com.visualstudio.code/config/electron-flags.conf
 echo "--enable-features=UseOzonePlatform,WaylandWindowDecorations" >> ~/.var/app/com.visualstudio.code/config/electron-flags.conf
 echo "--ozone-platform=wayland" >> ~/.var/app/com.visualstudio.code/config/electron-flags.conf
-flatpak install flathub com.microsoft.Edge
+flatpak install flathub com.microsoft.Edge --noninteractive --user
+sudo flatpak install flathub com.github.tchx84.Flatseal --noninteractive --system
+
+# #install and setup VS Code
+# sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+# sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+# sudo dnf check-update
+# sudo dnf install code
 
 #Enable and setup system gnome extensions 
 gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
-gsettings set org.gnome.shell favorite-apps ['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'firefox.desktop', 'com.visualstudio.code.desktop', 'com.discordapp.Discord.desktop', 'org.gnome.Software.desktop']
+gsettings set org.gnome.shell favorite-apps ['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.gedit.desktop', 'firefox.desktop', 'code.desktop', 'com.discordapp.Discord.desktop', 'org.gnome.Software.desktop']
 gsettings set org.gnome.nautilus.preferences always-use-location-entry true
 
 #setup gnome user extensions
@@ -92,3 +99,10 @@ sudo ln -s /usr/lib64/libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so
 sudo dnf install -y pactl
 pactl set-default-sink alsa_output.usb-Schiit_Audio_Schiit_Modi_-00.analog-stereo
 pactl set-default-source alsa_input.usb-Blue_Microphones_Yeti_Stereo_Microphone_REV8-00.analog-stereo.2
+
+#Move to Nvidia new feature branch
+sudo dnf update nobara-repos --refresh
+sudo dnf4 config-manager --set-enabled nobara-nvidia-new-feature-39
+sudo dnf update --refresh
+akmods
+sudo nobara-sync
