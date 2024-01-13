@@ -6,7 +6,9 @@ sudo dnf install -y ddcutil
 array=( https://extensions.gnome.org/extension/307/dash-to-dock/
 https://extensions.gnome.org/extension/517/caffeine/
 https://extensions.gnome.org/extension/4362/fullscreen-avoider/
-https://extensions.gnome.org/extension/6325/control-monitor-brightness-and-volume-with-ddcutil/ )
+https://extensions.gnome.org/extension/6325/control-monitor-brightness-and-volume-with-ddcutil/
+https://extensions.gnome.org/extension/4228/wireless-hid/
+https://extensions.gnome.org/extension/3193/blur-my-shell/ )
 
 for i in "${array[@]}"
 do
@@ -73,8 +75,7 @@ sudo flatpak install flathub com.github.tchx84.Flatseal --noninteractive --syste
 
 #Enable and setup system gnome extensions 
 gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
-gsettings set org.gnome.shell favorite-apps ['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.gedit.desktop', 'firefox.desktop', 'code.desktop', 'com.discordapp.Discord.desktop', 'org.gnome.Software.desktop']
-gsettings set org.gnome.nautilus.preferences always-use-location-entry true
+gsettings set org.gnome.shell favorite-apps ['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.gedit.desktop', 'firefox.desktop', 'com.visualstudio.code.desktop', 'com.discordapp.Discord.desktop', 'steam.desktop', 'org.gnome.Software.desktop']
 
 #setup gnome user extensions
 #dash-to-doc
@@ -84,8 +85,13 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock show-trash false
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock disable-overview-on-startup true
-gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock apply-custom-theme true
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink true
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock transparency-mode 'FIXED'
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 64
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock autohide true
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock background-color 'rgb(145,65,172)'
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock background-opacity 0.30
 #caffeine
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/caffeine\@patapon.info/schemas/ set org.gnome.shell.extensions.caffeine show-indicator 'always'
 
@@ -99,6 +105,10 @@ sudo ln -s /usr/lib64/libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so
 sudo dnf install -y pactl
 pactl set-default-sink alsa_output.usb-Schiit_Audio_Schiit_Modi_-00.analog-stereo
 pactl set-default-source alsa_input.usb-Blue_Microphones_Yeti_Stereo_Microphone_REV8-00.analog-stereo.2
+
+#Setup and install xbox controller dongle dependendencies may need to be ran again after reboot
+sudo dnf install -y "dnf5-command(builddep)"
+nobara-controller-config
 
 #Move to Nvidia new feature branch
 sudo dnf update nobara-repos --refresh
