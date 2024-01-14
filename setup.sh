@@ -12,7 +12,8 @@ https://extensions.gnome.org/extension/517/caffeine/
 https://extensions.gnome.org/extension/4362/fullscreen-avoider/
 https://extensions.gnome.org/extension/6325/control-monitor-brightness-and-volume-with-ddcutil/
 https://extensions.gnome.org/extension/4228/wireless-hid/
-https://extensions.gnome.org/extension/3193/blur-my-shell/ )
+https://extensions.gnome.org/extension/3193/blur-my-shell/
+https://extensions.gnome.org/extension/841/freon/ )
 
 for i in "${array[@]}"
 do
@@ -111,6 +112,9 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock background-opacity 0.30
 #caffeine
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/caffeine\@patapon.info/schemas/ set org.gnome.shell.extensions.caffeine show-indicator 'always'
+#freon
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii_Github.yahoo.com/schemas set org.gnome.shell.extensions.freon hot-sensors ['__average__', '__max__', 'NVIDIA GeForce RTX 3090', 'T_Sensor']
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii_Github.yahoo.com/schemas set org.gnome.shell.extensions.freon use-gpu-nvidia true
 
 #Create symlink to libnvidia-ml.so.1 so t-rex miner can access NVML to monitor GPU
 sudo ln -s /usr/lib/libnvidia-ml.so.1 /usr/lib/libnvidia-ml.so
