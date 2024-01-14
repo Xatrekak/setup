@@ -1,5 +1,9 @@
 #!/usr/bin/bash
 
+#Setup tmp workspace
+mkdir /tmp/quick-setup
+cd /tmp/quick-setup
+
 #Install dependencies for gnome extensions
 sudo dnf install -y ddcutil
 #install user gnome extensions
@@ -36,7 +40,6 @@ firefox betterttv-latest.xpi
 firefox load_reddit_images_directly-latest.xpi
 wget -P ~/Downloads https://raw.githubusercontent.com/Xatrekak/wallpaperRD/main/nighttab_backup.json
 firefox nighttab-latest.xpi
-rm *.xpi
 
 #setup NAS
 sudo dnf install -y nfs-utils
@@ -61,6 +64,20 @@ cp /mnt/nas/firefox/places.sqlite ~/.mozilla/firefox/bysvtelr.default-release/pl
 
 #install and setup flatpaks
 flatpak install flathub com.visualstudio.code --noninteractive --user
+mkdir -p ~/.var/app/com.visualstudio.code/config/Code/User/
+touch ~/.var/app/com.visualstudio.code/config/Code/User/settings.json
+cat > ~/.var/app/com.visualstudio.code/config/Code/User/settings.json << EOT
+{
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.profiles.linux": {
+      "bash": {
+        "path": "host-spawn",
+        "args": ["bash"]
+      }
+    },
+    "security.workspace.trust.enabled": false
+  }
+EOT
 touch ~/.var/app/com.visualstudio.code/config/electron-flags.conf
 echo "--enable-features=UseOzonePlatform,WaylandWindowDecorations" >> ~/.var/app/com.visualstudio.code/config/electron-flags.conf
 echo "--ozone-platform=wayland" >> ~/.var/app/com.visualstudio.code/config/electron-flags.conf
