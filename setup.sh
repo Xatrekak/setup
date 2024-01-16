@@ -28,19 +28,40 @@ do
     rm ${EXTENSION_ID}.zip
 done
 
-#install firefox extensions. close firefox after an extension is installed to isntall the next ones
-#requires user to agree to isntall
-wget https://addons.mozilla.org/firefox/downloads/file/4198829/ublock_origin-latest.xpi
-wget https://addons.mozilla.org/firefox/downloads/file/4208799/lastpass_password_manager-latest.xpi
-wget https://addons.mozilla.org/firefox/downloads/file/4215671/betterttv-latest.xpi
-wget https://addons.mozilla.org/firefox/downloads/file/3848032/nighttab-latest.xpi
-wget https://addons.mozilla.org/firefox/downloads/file/4219481/load_reddit_images_directly-latest.xpi
-firefox ublock_origin-latest.xpi
-firefox lastpass_password_manager-latest.xpi
-firefox betterttv-latest.xpi
-firefox load_reddit_images_directly-latest.xpi
+#Setup firefox extensions.
+#Get nighttab setup data. This must be imported manually by the user.
 wget -P ~/Downloads https://raw.githubusercontent.com/Xatrekak/wallpaperRD/main/nighttab_backup.json
-firefox nighttab-latest.xpi
+#Install extensions via policy
+sudo mkdir -p /etc/firefox/policies
+sudo touch /etc/firefox/policies/policies.json
+sudo bash -c 'cat > /etc/firefox/policies/policies.json << EOT
+{
+    "policies": {
+      "Extensions": {
+        "Install": [
+          "https://addons.mozilla.org/firefox/downloads/file/4198829/ublock_origin-latest.xpi",
+          "https://addons.mozilla.org/firefox/downloads/file/4208799/lastpass_password_manager-latest.xpi",
+          "https://addons.mozilla.org/firefox/downloads/file/4215671/betterttv-latest.xpi",
+          "https://addons.mozilla.org/firefox/downloads/file/3848032/nighttab-latest.xpi",
+          "https://addons.mozilla.org/firefox/downloads/file/4219481/load_reddit_images_directly-latest.xpi",
+          "https://addons.mozilla.org/firefox/downloads/file/3977700/youtube_window_fullscreen-latest.xpi"
+        ]
+      },
+      "ExtensionUpdate": true,
+      "DisableTelemetry": true,
+      "DisableFirefoxStudies": true,
+      "EnableTrackingProtection": {
+        "Value": true,
+        "Locked": false,
+        "Cryptomining": true,
+        "Fingerprinting": true,
+        "EmailTracking": true,
+        "Exceptions": []
+      }
+    }
+}
+EOT'
+
 
 #setup NAS
 sudo dnf install -y nfs-utils
@@ -83,6 +104,7 @@ touch ~/.var/app/com.visualstudio.code/config/electron-flags.conf
 echo "--enable-features=UseOzonePlatform,WaylandWindowDecorations" >> ~/.var/app/com.visualstudio.code/config/electron-flags.conf
 echo "--ozone-platform=wayland" >> ~/.var/app/com.visualstudio.code/config/electron-flags.conf
 flatpak install flathub com.microsoft.Edge --noninteractive --user
+flatpak install flathub org.qbittorrent.qBittorrent --noninteractive --user
 sudo flatpak install flathub com.github.tchx84.Flatseal --noninteractive --system
 
 # #install and setup VS Code
