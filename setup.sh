@@ -48,6 +48,9 @@ sudo bash -c 'cat > /etc/firefox/policies/policies.json << EOT
         ]
       },
       "ExtensionUpdate": true,
+      "Homepage": {
+      "URL": "moz-extension://ecde9aef-d343-4155-b326-7cb3939950f8/index.html"
+      },
       "DisableTelemetry": true,
       "DisableFirefoxStudies": true,
       "EnableTrackingProtection": {
