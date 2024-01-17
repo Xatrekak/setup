@@ -185,7 +185,7 @@ EOT
 
 
 #Setup and install xbox controller dongle dependendencies needs to be ran again after reboot
-usermod -a -G pkg-build $USER
+sudo usermod -a -G pkg-build $USER
 exec su -l $USER
 nobara-controller-config
 # #setup restart script
