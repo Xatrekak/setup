@@ -84,7 +84,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.
 #caffeine
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/caffeine\@patapon.info/schemas/ set org.gnome.shell.extensions.caffeine show-indicator 'always'
 #freon
-gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii_Github.yahoo.com/schemas set org.gnome.shell.extensions.freon hot-sensors ['__average__', '__max__', 'NVIDIA GeForce RTX 3090', 'T_Sensor']
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii_Github.yahoo.com/schemas set org.gnome.shell.extensions.freon hot-sensors "['__average__', '__max__', 'NVIDIA GeForce RTX 3090', 'T_Sensor']"
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii_Github.yahoo.com/schemas set org.gnome.shell.extensions.freon use-gpu-nvidia true
 
 ###############################################################################
@@ -161,13 +161,30 @@ pip install gns3-gui
 ###############################################################################
 #############################Final Configuration###############################
 ###############################################################################
+#setup restart script
+mkdir -p ~/.config/autostart
+touch ~/.config/autostart/setup.desktop
+touch ~/.config/autostart/setup.sh
+cat > ~/.config/autostart/setup.desktop << EOT
+[Desktop Entry]
+Type=Application
+Name=startup script
+Exec=$HOME/.config/autostart/setup.sh
+#X-GNOME-Autostart-enabled=true
+EOT
+cat > ~/.config/autostart/setup.sh << EOT
+sudo nobara-controller-config
+rm ~/.config/autostart/setup.desktop
+rm ~/.config/autostart/setup.sh
+EOT
+
 #Setup and install xbox controller dongle dependendencies may need to be ran again after reboot
 sudo dnf install -y "dnf5-command(builddep)"
-nobara-controller-config
+sudo nobara-controller-config
 
 #Move to Nvidia new feature branch
 sudo dnf update nobara-repos --refresh
 sudo dnf4 config-manager --set-enabled nobara-nvidia-new-feature-39
 sudo dnf update --refresh
-akmods
+sudo akmods
 sudo nobara-sync
