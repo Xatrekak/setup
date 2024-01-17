@@ -36,7 +36,7 @@ echo file://$HOME/Projects >> ~/.config/gtk-3.0/bookmarks
 
 #Enable and setup system gnome extensions 
 gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
-gsettings set org.gnome.shell favorite-apps ['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.gedit.desktop', 'firefox.desktop', 'com.visualstudio.code.desktop', 'com.discordapp.Discord.desktop', 'steam.desktop', 'org.gnome.Software.desktop']
+gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.gedit.desktop', 'firefox.desktop', 'com.visualstudio.code.desktop', 'com.discordapp.Discord.desktop', 'steam.desktop', 'org.gnome.Software.desktop']"
 
 #Install dependencies for gnome extensions
 sudo dnf install -y ddcutil
@@ -62,6 +62,9 @@ do
     rm ${EXTENSION_ID}.zip
 done
 
+read -p "Waiting for extension installation to finish. Press enter to continue." -n 1 -r
+echo 'Continuing.'
+
 #setup gnome user extensions
 #dash-to-doc
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock multi-monitor true
@@ -75,6 +78,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock transparency-mode 'FIXED'
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 64
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock autohide true
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock custom-background-color true
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock background-color 'rgb(145,65,172)'
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock background-opacity 0.30
 #caffeine
@@ -128,6 +132,8 @@ cp /mnt/nas/firefox/places.sqlite ~/.mozilla/firefox/bysvtelr.default-release/pl
 #install apps
 #install and setup flatpaks
 flatpak install flathub com.visualstudio.code --noninteractive --user
+flatpak install flathub com.discordapp.Discord --noninteractive --user
+flatpak install flathub com.mattjakeman.ExtensionManager --noninteractive --user
 mkdir -p ~/.var/app/com.visualstudio.code/config/Code/User/
 touch ~/.var/app/com.visualstudio.code/config/Code/User/settings.json
 cat > ~/.var/app/com.visualstudio.code/config/Code/User/settings.json << EOT
