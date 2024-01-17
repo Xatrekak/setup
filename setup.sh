@@ -184,28 +184,25 @@ rm ~/.config/autostart/setup.sh
 EOT
 
 
-#Setup and install xbox controller dongle dependendencies needs to be ran again after reboot
+#Setup and install xbox controller. The install will run on next boot.
 sudo usermod -a -G pkg-build $USER
-exec su -l $USER
+#setup restart script
+mkdir -p ~/.config/autostart
+touch ~/.config/autostart/setup.desktop
+touch ~/.config/autostart/setup.sh
+cat > ~/.config/autostart/setup.desktop << EOT
+[Desktop Entry]
+Type=Application
+Name=startup script
+Exec=$HOME/.config/autostart/setup.sh
+#X-GNOME-Autostart-enabled=true
+EOT
+cat > ~/.config/autostart/setup.sh << EOT
 nobara-controller-config
-# #setup restart script
-# mkdir -p ~/.config/autostart
-# touch ~/.config/autostart/setup.desktop
-# touch ~/.config/autostart/setup.sh
-# cat > ~/.config/autostart/setup.desktop << EOT
-# [Desktop Entry]
-# Type=Application
-# Name=startup script
-# Exec=$HOME/.config/autostart/setup.sh
-# #X-GNOME-Autostart-enabled=true
-# EOT
-# cat > ~/.config/autostart/setup.sh << EOT
-# nobara-controller-config
-# nobara-controller-config
-# rm ~/.config/autostart/setup.desktop
-# rm ~/.config/autostart/setup.sh
-# sudo reboot now
-# EOT
+rm ~/.config/autostart/setup.desktop
+rm ~/.config/autostart/setup.sh
+sudo reboot now
+EOT
 
 #Move to Nvidia new feature branch
 sudo dnf update nobara-repos --refresh
