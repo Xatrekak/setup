@@ -127,7 +127,12 @@ sudo bash -c 'cat > /etc/firefox/policies/policies.json << EOT
 }
 EOT'
 #Add bookmarks to Firefox
-cp /mnt/nas/firefox/places.sqlite ~/.mozilla/firefox/bysvtelr.default-release/places.sqlite
+firefox &
+sleep 5
+pkill -f firefox
+FFX_PATH=$(find ~/.mozilla/firefox/ -maxdepth 1 -type d -name '*default-release*' -print -quit)>/dev/null
+rm $FFX_PATH/places.sqlite
+ln -s /mnt/nas/firefox/places.sqlite $FFX_PATH/places.sqlite
 
 #install apps
 #install and setup flatpaks
@@ -178,9 +183,29 @@ rm ~/.config/autostart/setup.desktop
 rm ~/.config/autostart/setup.sh
 EOT
 
-#Setup and install xbox controller dongle dependendencies may need to be ran again after reboot
-sudo dnf install -y "dnf5-command(builddep)"
-sudo nobara-controller-config
+
+#Setup and install xbox controller dongle dependendencies needs to be ran again after reboot
+usermod -a -G pkg-build $USER
+exec su -l $USER
+nobara-controller-config
+# #setup restart script
+# mkdir -p ~/.config/autostart
+# touch ~/.config/autostart/setup.desktop
+# touch ~/.config/autostart/setup.sh
+# cat > ~/.config/autostart/setup.desktop << EOT
+# [Desktop Entry]
+# Type=Application
+# Name=startup script
+# Exec=$HOME/.config/autostart/setup.sh
+# #X-GNOME-Autostart-enabled=true
+# EOT
+# cat > ~/.config/autostart/setup.sh << EOT
+# nobara-controller-config
+# nobara-controller-config
+# rm ~/.config/autostart/setup.desktop
+# rm ~/.config/autostart/setup.sh
+# sudo reboot now
+# EOT
 
 #Move to Nvidia new feature branch
 sudo dnf update nobara-repos --refresh
@@ -188,3 +213,4 @@ sudo dnf4 config-manager --set-enabled nobara-nvidia-new-feature-39
 sudo dnf update --refresh
 sudo akmods
 sudo nobara-sync
+sudo reboot now
