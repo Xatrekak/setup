@@ -2,6 +2,8 @@
 ###############################################################################
 #############################System Configuration##############################
 ###############################################################################
+echo Begining with system configuration.
+sleep 1
 #audio setup
 # `pactl list short sinks` to get the output names for sink
 # `pactl list short sources` to get the input names for source
@@ -27,9 +29,13 @@ sudo update-grub
 #Upgrade pip
 pip install --upgrade pip
 
+echo System configuration finished.
 ###############################################################################
 #############################Shell Configuration###############################
 ###############################################################################
+echo Begining with shell configuration.
+sleep 1
+
 #Setup gnome shell behavior
 gsettings set org.gnome.desktop.interface enable-hot-corners false
 
@@ -52,7 +58,7 @@ echo -e '#!/usr/bin/python3' > ~/Templates/py_script.py
 gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
 gsettings set org.gnome.shell favorite-apps \
 "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.gedit.desktop', 'firefox.desktop', \
-'com.visualstudio.code.desktop', 'com.discordapp.Discord.desktop', 'steam.desktop', 'org.gnome.Software.desktop']"
+'VScode.desktop', 'com.discordapp.Discord.desktop', 'steam.desktop', 'org.gnome.Software.desktop']"
 
 #setup Gnome Weather
 gsettings set org.gnome.Weather locations "[<(uint32 2, <('Alexandria', 'KDCA', true, \
@@ -98,55 +104,16 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii
 "['__average__', '__max__', 'NVIDIA GeForce RTX 3090', 'T_Sensor']"
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii_Github.yahoo.com/schemas set org.gnome.shell.extensions.freon use-gpu-nvidia true
 
+echo Shell configuration finished.
 ###############################################################################
 #############################App Configuration#################################
 ###############################################################################
-#Setup firefox.
-# This method is commented out while we try the NAS import method
-# #Get nighttab extension setup data. This must be imported manually by the user.
-# wget -P ~/Downloads https://raw.githubusercontent.com/Xatrekak/wallpaperRD/main/nighttab_backup.json
-# #Install extensions via policy
-# sudo mkdir -p /etc/firefox/policies
-# sudo touch /etc/firefox/policies/policies.json
-# sudo bash -c 'cat > /etc/firefox/policies/policies.json << EOT
-# {
-#     "policies": {
-#       "Extensions": {
-#         "Install": [
-#           "https://addons.mozilla.org/firefox/downloads/file/4198829/ublock_origin-latest.xpi",
-#           "https://addons.mozilla.org/firefox/downloads/file/4208799/lastpass_password_manager-latest.xpi",
-#           "https://addons.mozilla.org/firefox/downloads/file/4215671/betterttv-latest.xpi",
-#           "https://addons.mozilla.org/firefox/downloads/file/3848032/nighttab-latest.xpi",
-#           "https://addons.mozilla.org/firefox/downloads/file/4219481/load_reddit_images_directly-latest.xpi",
-#           "https://addons.mozilla.org/firefox/downloads/file/3977700/youtube_window_fullscreen-latest.xpi"
-#         ]
-#       },
-#       "ExtensionUpdate": true,
-#       "Homepage": {
-#       "URL": "moz-extension://ecde9aef-d343-4155-b326-7cb3939950f8/index.html"
-#       },
-#       "DisableTelemetry": true,
-#       "DisableFirefoxStudies": true,
-#       "EnableTrackingProtection": {
-#         "Value": true,
-#         "Locked": false,
-#         "Cryptomining": true,
-#         "Fingerprinting": true,
-#         "EmailTracking": true,
-#         "Exceptions": []
-#       }
-#     }
-# }
-# EOT'
-# #Add bookmarks to Firefox
-# firefox &
-# sleep 5
-# pkill -f firefox
-# FFX_PATH=$(find ~/.mozilla/firefox/ -maxdepth 1 -type d -name '*default-release*' -print -quit)>/dev/null
-# rm $FFX_PATH/places.sqlite
-# ln -s /mnt/nas/firefox/places.sqlite $FFX_PATH/places.sqlite
+echo Begining with app configuration.
+sleep 1
 
+#Setup firefox.
 # link mozzila from nas to profile
+rm -rf ~/.mozilla
 ln -s /mnt/nas/firefox/.mozilla ~/.mozilla
 
 #install apps
@@ -174,10 +141,31 @@ cat > ~/.var/app/com.visualstudio.code/config/Code/User/settings.json << EOT
     "security.workspace.trust.enabled": false
   }
 EOT
-#Attempt to tell vscode to use wayland native. New update broke this.
-touch ~/.var/app/com.visualstudio.code/config/electron-flags.conf
-echo "--enable-features=UseOzonePlatform,WaylandWindowDecorations" >> ~/.var/app/com.visualstudio.code/config/electron-flags.conf
-echo "--ozone-platform=wayland" >> ~/.var/app/com.visualstudio.code/config/electron-flags.conf
+#Force code to run native wayland.
+flatpak override --user com.visualstudio.code --socket=wayland --socket=fallback-x11 --nosocket=x11
+touch ~/.local/share/applications/VScode.desktop
+cat > ~/.local/share/applications/VScode.desktop << EOT
+[Desktop Entry]
+Name=Visual Studio Code
+Comment=Code Editing. Redefined.
+GenericName=Text Editor
+Exec=/usr/bin/flatpak run com.visualstudio.code --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland
+Icon=com.visualstudio.code
+Type=Application
+StartupNotify=true
+StartupWMClass=Code
+Categories=TextEditor;Development;IDE;
+MimeType=text/plain;inode/directory;application/x-code-workspace;
+Actions=new-empty-window;
+Keywords=vscode;
+X-Flatpak-Tags=proprietary;
+X-Flatpak=com.visualstudio.code
+
+[Desktop Action new-empty-window]
+Name=New Empty Window
+Exec=/usr/bin/flatpak run com.visualstudio.code --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland --new-window
+Icon=com.visualstudio.code
+EOT
 
 #install GNS3
 pip install gns3-gui
@@ -185,34 +173,22 @@ pip install gns3-gui
 #setup and install input-leap
 sudo firewall-cmd --permanent --add-port=24800/tcp
 sudo firewall-cmd --reload
-sudo dnf4 copr enable ofourdan/input-leap-ei-enabled
-sudo dnf4 install input-leap --repo copr:copr.fedorainfracloud.org:ofourdan:input-leap-ei-enabled
-sudo dnf4 reinstall libportal --repo copr:copr.fedorainfracloud.org:ofourdan:input-leap-ei-enabled
+sudo dnf4 copr enable -y ofourdan/input-leap-ei-enabled
+sudo dnf4 install -y input-leap --repo copr:copr.fedorainfracloud.org:ofourdan:input-leap-ei-enabled
+sudo dnf4 reinstall -y libportal --repo copr:copr.fedorainfracloud.org:ofourdan:input-leap-ei-enabled
 
+echo App configuration finished.
 ###############################################################################
 #############################Final Configuration###############################
 ###############################################################################
-#setup restart script
-mkdir -p ~/.config/autostart
-touch ~/.config/autostart/setup.desktop
-touch ~/.config/autostart/setup.sh
-cat > ~/.config/autostart/setup.desktop << EOT
-[Desktop Entry]
-Type=Application
-Name=startup script
-Exec=$HOME/.config/autostart/setup.sh
-#X-GNOME-Autostart-enabled=true
-EOT
-cat > ~/.config/autostart/setup.sh << EOT
-sudo nobara-controller-config
-rm ~/.config/autostart/setup.desktop
-rm ~/.config/autostart/setup.sh
-EOT
+echo Begining with Final configuration.
+sleep 1
 
-
-#Setup and install xbox controller. The install will run on next boot.
+#Setup and install xbox controller dependencies.
 sudo usermod -a -G pkg-build $USER
-#setup restart script
+sudo dnf install -y "dnf5-command(builddep)"
+
+#Setup restart script to install xbox controller on next reboot.
 mkdir -p ~/.config/autostart
 touch ~/.config/autostart/setup.desktop
 touch ~/.config/autostart/setup.sh
@@ -227,13 +203,22 @@ cat > ~/.config/autostart/setup.sh << EOT
 nobara-controller-config
 rm ~/.config/autostart/setup.desktop
 rm ~/.config/autostart/setup.sh
-sudo reboot now
 EOT
+chmod +x ~/.config/autostart/setup.sh
 
 #Move to Nvidia new feature branch
 sudo dnf update nobara-repos --refresh
 sudo dnf4 config-manager --set-enabled nobara-nvidia-new-feature-39
-sudo dnf update --refresh
+sudo dnf update -y --refresh
 sudo akmods
 sudo nobara-sync
+
+#Reboot the system.
+echo Configuration finished. Rebooing in: 
+echo 3
+sleep 1
+echo 2
+sleep 1
+echo 1
+sleep 1
 sudo reboot now
