@@ -39,6 +39,10 @@ sleep 1
 #Setup gnome shell behavior
 gsettings set org.gnome.desktop.interface enable-hot-corners false
 
+#Setup Japanese input for Gnome via mozc and its dependencies
+sudo dnf install -y ibus-mozc
+gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'mozc-on')]"
+
 #Setup gnome file browser
 gsettings set org.gtk.gtk4.Settings.FileChooser sort-directories-first true
 gsettings set org.gnome.nautilus.preferences always-use-location-entry true
@@ -66,7 +70,7 @@ gsettings set org.gnome.Weather locations "[<(uint32 2, <('Alexandria', 'KDCA', 
 <(uint32 2, <('Washington DC, Reagan National Airport', 'KDCA', false, [(0.67803131976116615, -1.3444998506811625)], @a(dd) [])>)>]"
 
 #Install dependencies for gnome user extensions
-sudo dnf install -y ddcutil #needed for control-monitor-brightness-and-volume-with-ddcutil
+sudo dnf install -y ddcutil #needed for brightness-control-using-ddcutil
 
 #Install Gnome extension CLI installer
 pip install gnome-extensions-cli
@@ -75,11 +79,11 @@ pip install gnome-extensions-cli
 # https://extensions.gnome.org/extension/307/dash-to-dock/
 # https://extensions.gnome.org/extension/517/caffeine/
 # https://extensions.gnome.org/extension/4362/fullscreen-avoider/
-# https://extensions.gnome.org/extension/6325/control-monitor-brightness-and-volume-with-ddcutil/
+# https://extensions.gnome.org/extension/2645/brightness-control-using-ddcutil/
 # https://extensions.gnome.org/extension/4228/wireless-hid/
 # https://extensions.gnome.org/extension/3193/blur-my-shell/
 # https://extensions.gnome.org/extension/841/freon/
-gext install 307 517 4362 6325 4228 3193 841
+gext install 307 517 4362 2645 4228 3193 841
 
 #setup gnome user extensions
 #dash-to-doc
