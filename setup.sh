@@ -118,6 +118,9 @@ echo Shell configuration finished.
 echo Begining with app configuration.
 sleep 1
 
+#Install lsyncd for easy rysnc to nas
+sudo dnf install -y lsyncd
+
 #Setup firefox.
 # link mozzila from nas to profile
 echo Copying firefox config from NAS to host, this may take a while.
