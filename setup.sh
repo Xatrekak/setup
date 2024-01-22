@@ -125,13 +125,21 @@ ln -s /mnt/nas/firefox/.mozilla ~/.mozilla
 
 #install apps
 #install and setup flatpaks
+echo Installing Flatseal
 sudo flatpak install flathub com.github.tchx84.Flatseal --noninteractive --system
+echo Installing Discord
 flatpak install flathub com.discordapp.Discord --noninteractive --user
+echo Installing ExtensionManager
 flatpak install flathub com.mattjakeman.ExtensionManager --noninteractive --user
+echo Installing onlyoffice
 flatpak install flathub org.onlyoffice.desktopeditors --noninteractive --user
+echo Installing Filezilla
 flatpak install flathub org.filezillaproject.Filezilla --noninteractive --user
+echo Installing Edge
 flatpak install flathub com.microsoft.Edge --noninteractive --user
+echo Installing qBittorrent
 flatpak install flathub org.qbittorrent.qBittorrent --noninteractive --user
+echo Installing visualstudio.code
 flatpak install flathub com.visualstudio.code --noninteractive --user
 #Set VSCode to use host terminal
 mkdir -p ~/.var/app/com.visualstudio.code/config/Code/User/
@@ -175,9 +183,11 @@ Icon=com.visualstudio.code
 EOT
 
 #install GNS3
-pip install gns3-gui
+echo Installing gns3-gui
+pip install gns3-gui --quiet
 
 #setup and install input-leap
+echo Installing input-leap
 sudo firewall-cmd --permanent --add-port=24800/tcp
 sudo firewall-cmd --reload
 sudo dnf4 copr enable -y ofourdan/input-leap-ei-enabled
@@ -199,6 +209,7 @@ sudo dnf install -y "dnf5-command(builddep)"
 mkdir -p ~/.config/autostart
 touch ~/.config/autostart/setup.desktop
 touch ~/.config/autostart/setup.sh
+chmod +x ~/.config/autostart/setup.sh
 cat > ~/.config/autostart/setup.desktop << EOT
 [Desktop Entry]
 Type=Application
@@ -211,7 +222,6 @@ nobara-controller-config
 rm ~/.config/autostart/setup.desktop
 rm ~/.config/autostart/setup.sh
 EOT
-chmod +x ~/.config/autostart/setup.sh
 
 #Move to Nvidia new feature branch
 sudo dnf update nobara-repos --refresh
