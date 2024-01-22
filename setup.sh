@@ -45,6 +45,9 @@ gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 
 
 #Setup gnome file browser
 gsettings set org.gtk.gtk4.Settings.FileChooser sort-directories-first true
+gsettings set org.gnome.nautilus.preferences show-image-thumbnails 'always'
+gsettings set org.gnome.nautilus.preferences show-delete-permanently true
+gsettings set org.gnome.nautilus.preferences show-create-link true
 gsettings set org.gnome.nautilus.preferences always-use-location-entry true
 echo 'file:///mnt/nas' >> ~/.config/gtk-3.0/bookmarks
 mkdir ~/Projects
