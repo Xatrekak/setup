@@ -120,8 +120,10 @@ sleep 1
 
 #Setup firefox.
 # link mozzila from nas to profile
+echo Copying firefox config from NAS to host, this may take a while.
 rm -rf ~/.mozilla
-ln -s /mnt/nas/firefox/.mozilla ~/.mozilla
+cp -r /mnt/nas/firefox/.mozilla ~/.mozilla
+lsyncd -rsync ~/.mozilla /mnt/nas/firefox/.mozilla
 
 #install apps
 #install and setup flatpaks
@@ -193,6 +195,9 @@ sudo firewall-cmd --reload
 sudo dnf4 copr enable -y ofourdan/input-leap-ei-enabled
 sudo dnf4 install -y input-leap --repo copr:copr.fedorainfracloud.org:ofourdan:input-leap-ei-enabled
 sudo dnf4 reinstall -y libportal --repo copr:copr.fedorainfracloud.org:ofourdan:input-leap-ei-enabled
+
+#Remove unused apps
+sudo dnf remove -y libreoffice*
 
 echo App configuration finished.
 ###############################################################################
