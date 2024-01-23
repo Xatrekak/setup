@@ -22,8 +22,19 @@ sudo mount /mnt/nas
 sudo ln -s /usr/lib/libnvidia-ml.so.1 /usr/lib/libnvidia-ml.so
 sudo ln -s /usr/lib64/libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so
 
-#revert back to unpredicatble kernerl interface names
-sudo sed -i '/GRUB_CMDLINE_LINUX/s/"nofb"/"nofb net.ifnames=0"/' /etc/default/grub
+#revert back to unpredicatble kernerl interface names and set grub time to 0
+sudo bash -c "cat > /etc/default/grub << EOT
+GRUB_DEFAULT='saved'
+GRUB_DISABLE_RECOVERY='true'
+GRUB_DISABLE_SUBMENU='true'
+GRUB_ENABLE_BLSCFG='true'
+GRUB_TERMINAL_OUTPUT='console'
+GRUB_TIMEOUT='0'
+GRUB_CMDLINE_LINUX_DEFAULT='quiet splash'
+GRUB_DISTRIBUTOR='Nobara Linux'
+GRUB_CMDLINE_LINUX='nofb net.ifnames=0'
+EOT"
+sleep 1
 sudo update-grub
 
 #Upgrade pip
@@ -35,6 +46,13 @@ echo System configuration finished.
 ###############################################################################
 echo Begining with shell configuration.
 sleep 1
+
+#Setup background service
+git clone https://github.com/Xatrekak/Gnome-rnd-wp
+cd Gnome-rnd-wp
+./install.sh --nsfw_lvl auto
+cd ..
+rm -rf Gnome-rnd-wp/
 
 #Setup gnome shell behavior
 gsettings set org.gnome.desktop.interface enable-hot-corners false
@@ -198,6 +216,16 @@ sudo firewall-cmd --reload
 sudo dnf4 copr enable -y ofourdan/input-leap-ei-enabled
 sudo dnf4 install -y input-leap --repo copr:copr.fedorainfracloud.org:ofourdan:input-leap-ei-enabled
 sudo dnf4 reinstall -y libportal --repo copr:copr.fedorainfracloud.org:ofourdan:input-leap-ei-enabled
+
+#Install FAH
+sudo dnf install -y pygtk2
+mkdir /tmp/fah
+wget -O /tmp/fah/fahclient.rpm https://download.foldingathome.org/releases/public/release/fahclient/centos-6.7-64bit/v7.6/latest.rpm
+wget -O /tmp/fah/fahcontrol.rpm https://download.foldingathome.org/releases/public/release/fahcontrol/centos-6.7-64bit/v7.6/latest.noarch.rpm
+wget -O /tmp/fah/fahviewer.rpm https://download.foldingathome.org/releases/public/release/fahviewer/centos-6.7-64bit/v7.6/latest.rpm
+sudo dnf install -y  /tmp/fah/fahclient.rpm
+sudo dnf install -y  /tmp/fah/fahcontrol.rpm
+sudo dnf install -y  /tmp/fah/fahviewer.rpm
 
 #Remove unused apps
 sudo dnf remove -y libreoffice*
