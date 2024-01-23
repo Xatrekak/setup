@@ -36,7 +36,6 @@ GRUB_CMDLINE_LINUX='nofb net.ifnames=0'
 EOT"
 sleep 1
 sudo update-grub
-
 #Upgrade pip
 pip install --upgrade pip
 
@@ -58,8 +57,11 @@ rm -rf Gnome-rnd-wp/
 gsettings set org.gnome.desktop.interface enable-hot-corners false
 
 #Setup Japanese input for Gnome via mozc and its dependencies
-sudo dnf install -y ibus-mozc
+sudo dnf install -y mozc ibus-mozc
 gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'mozc-on')]"
+
+#Move lanuge switch hotkey to alt +shift
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['<Control>space']"
 
 #Setup gnome file browser
 gsettings set org.gtk.gtk4.Settings.FileChooser sort-directories-first true
