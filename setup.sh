@@ -2,8 +2,9 @@
 ###############################################################################
 #############################System Configuration##############################
 ###############################################################################
-echo Begining with system configuration.
+echo Beginning with system configuration.
 sleep 1
+
 #audio setup
 # `pactl list short sinks` to get the output names for sink
 # `pactl list short sources` to get the input names for source
@@ -36,6 +37,7 @@ GRUB_CMDLINE_LINUX='nofb net.ifnames=0'
 EOT"
 sleep 1
 sudo update-grub
+
 #Upgrade pip
 pip install --upgrade pip
 
@@ -43,7 +45,7 @@ echo System configuration finished.
 ###############################################################################
 #############################Shell Configuration###############################
 ###############################################################################
-echo Begining with shell configuration.
+echo Beginning with shell configuration.
 sleep 1
 
 #Setup background service
@@ -99,13 +101,15 @@ sudo dnf install -y ddcutil #needed for brightness-control-using-ddcutil
 pip install gnome-extensions-cli
 
 #install user gnome extensions
-# https://extensions.gnome.org/extension/307/dash-to-dock/
-# https://extensions.gnome.org/extension/517/caffeine/
-# https://extensions.gnome.org/extension/4362/fullscreen-avoider/
-# https://extensions.gnome.org/extension/2645/brightness-control-using-ddcutil/
-# https://extensions.gnome.org/extension/4228/wireless-hid/
-# https://extensions.gnome.org/extension/3193/blur-my-shell/
-# https://extensions.gnome.org/extension/841/freon/
+<<extensions
+https://extensions.gnome.org/extension/307/dash-to-dock/
+https://extensions.gnome.org/extension/517/caffeine/
+https://extensions.gnome.org/extension/4362/fullscreen-avoider/
+https://extensions.gnome.org/extension/2645/brightness-control-using-ddcutil/
+https://extensions.gnome.org/extension/4228/wireless-hid/
+https://extensions.gnome.org/extension/3193/blur-my-shell/
+https://extensions.gnome.org/extension/841/freon/
+extensions
 gext install 307 517 4362 2645 4228 3193 841
 
 #setup gnome user extensions
@@ -131,21 +135,31 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii
 "['__average__', '__max__', 'NVIDIA GeForce RTX 3090', 'T_Sensor']"
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii_Github.yahoo.com/schemas set org.gnome.shell.extensions.freon use-gpu-nvidia true
 
+#Alias setup
+cat >> ~/.bashrc << EOT
+
+# User defined alises
+alias FAHControl='python2 /usr/bin/FAHControl'
+alias mnt="mount | awk -F' ' '{ printf \"%s\\\t%s\\\n\", \\\$1, \\\$3; }' | column -t | egrep '^(/dev/|.*nas)' | sort"
+alias gh='history|grep'
+alias cpv='rsync -ah --info=progress2'
+EOT
+
 echo Shell configuration finished.
 ###############################################################################
 #############################App Configuration#################################
 ###############################################################################
-echo Begining with app configuration.
+echo Beginning with app configuration.
 sleep 1
 
 #Install lsyncd for easy rysnc to nas
 sudo dnf install -y lsyncd
 
 #Setup firefox.
-# link mozzila from nas to profile
+#link .mozzila on nas and profile
 echo Copying firefox config from NAS to host, this may take a while.
 rm -rf ~/.mozilla
-cp -r /mnt/nas/firefox/.mozilla ~/.mozilla
+cpv /mnt/nas/firefox/.mozilla ~/.mozilla
 lsyncd -rsync ~/.mozilla /mnt/nas/firefox/.mozilla
 
 #install apps
@@ -236,7 +250,7 @@ echo App configuration finished.
 ###############################################################################
 #############################Final Configuration###############################
 ###############################################################################
-echo Begining with Final configuration.
+echo Beginning with Final configuration.
 sleep 1
 
 #Setup and install xbox controller dependencies.
