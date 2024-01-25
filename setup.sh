@@ -288,7 +288,6 @@ sudo bash -c "cat > /etc/fahclient/config.xml << EOT
     <pci-bus v='9'/>
     <pci-slot v='0'/>
   </slot>
-  <slot id='1' type='CPU'/>
 </config>
 EOT"
 
@@ -320,6 +319,7 @@ Exec=$HOME/.config/autostart/setup.sh
 #X-GNOME-Autostart-enabled=true
 EOT
 cat > ~/.config/autostart/setup.sh << EOT
+sleep 60
 nobara-controller-config
 rm ~/.config/autostart/setup.desktop
 rm ~/.config/autostart/setup.sh
