@@ -172,26 +172,40 @@ else
 fi
 
 #install apps
-#install and setup flatpaks
+#Flatpaks
+#Fleatseal
 echo Installing Flatseal
 sudo flatpak install flathub com.github.tchx84.Flatseal --noninteractive --system
+#Anki
+echo Installing Anki
+flatpak install flathub net.ankiweb.Anki --noninteractive --user
+flatpak override --user net.ankiweb.Anki --filesystem=host --socket=wayland --nosocket=x11
+echo "export ANKI_WAYLAND=1" >> ~/.bash_profile
+#Eye of gnome
 echo Installing Eye of Gnome
 flatpak install flathub org.gnome.eog --noninteractive --user
+#Discord
 echo Installing Discord
 flatpak install flathub com.discordapp.Discord --noninteractive --user
+#ExtensionManager
 echo Installing ExtensionManager
 flatpak install flathub com.mattjakeman.ExtensionManager --noninteractive --user
+#onlyoffice
 echo Installing onlyoffice
 flatpak install flathub org.onlyoffice.desktopeditors --noninteractive --user
+#Filezilla
 echo Installing Filezilla
 flatpak install flathub org.filezillaproject.Filezilla --noninteractive --user
+#Edge
 echo Installing Edge
 flatpak install flathub com.microsoft.Edge --noninteractive --user
+#qBittorrent
 echo Installing qBittorrent
 flatpak install flathub org.qbittorrent.qBittorrent --noninteractive --user
+#visualstudio.code
 echo Installing visualstudio.code
 flatpak install flathub com.visualstudio.code --noninteractive --user
-#Set VSCode to use host terminal
+##Set VSCode to use host terminal
 mkdir -p ~/.var/app/com.visualstudio.code/config/Code/User/
 touch ~/.var/app/com.visualstudio.code/config/Code/User/settings.json
 cat > ~/.var/app/com.visualstudio.code/config/Code/User/settings.json << EOT
@@ -206,7 +220,7 @@ cat > ~/.var/app/com.visualstudio.code/config/Code/User/settings.json << EOT
     "security.workspace.trust.enabled": false
   }
 EOT
-#Force code to run native wayland.
+##Force code to run native wayland.
 flatpak override --user com.visualstudio.code --socket=wayland --socket=fallback-x11 --nosocket=x11
 touch ~/.local/share/applications/VScode.desktop
 cat > ~/.local/share/applications/VScode.desktop << EOT
