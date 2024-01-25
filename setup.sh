@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+set +H #Disable history exspansion for our script
 ###############################################################################
 #############################System Configuration##############################
 ###############################################################################
@@ -159,7 +160,12 @@ sudo dnf install -y lsyncd
 #link .mozzila on nas and profile
 echo Copying firefox config from NAS to host, this may take a while.
 rm -rf ~/.mozilla
-cpv /mnt/nas/firefox/.mozilla ~/.mozilla
+rsync -ah --info=progress2 /mnt/nas/firefox/.mozilla ~/.mozilla
+# Check if the directory exists so we don't wipe out the backup
+if [ ! -d ~/.mozilla ]; then
+    echo "Error: Directory ~/.mozilla does not exist."
+    exit 1
+fi
 lsyncd -rsync ~/.mozilla /mnt/nas/firefox/.mozilla
 
 #install apps
@@ -242,6 +248,31 @@ wget -O /tmp/fah/fahviewer.rpm https://download.foldingathome.org/releases/publi
 sudo dnf install -y  /tmp/fah/fahclient.rpm
 sudo dnf install -y  /tmp/fah/fahcontrol.rpm
 sudo dnf install -y  /tmp/fah/fahviewer.rpm
+#Setup FAH
+sudo mkdir -p /etc/fahclient/
+sudo touch /etc/fahclient/config.xml
+sudo bash -c "cat > /etc/fahclient/config.xml << EOT
+<config>
+  <!-- Network -->
+  <proxy v=':8080'/>
+
+  <!-- Slot Control -->
+  <power v='full'/>
+
+  <!-- User Information -->
+  <passkey v='3bd1d47c043d68653bd1d47c043d6865'/>
+  <team v='223518'/>
+  <user v='xatrekak'/>
+
+  <!-- Folding Slots -->
+  <slot id='0' type='GPU'>
+    <pci-bus v='9'/>
+    <pci-slot v='0'/>
+  </slot>
+  <slot id='1' type='CPU'/>
+</config>
+EOT"
+
 
 #Remove unused apps
 sudo dnf remove -y libreoffice*
