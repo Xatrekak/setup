@@ -59,6 +59,9 @@ rm -rf Gnome-rnd-wp/
 #Setup gnome shell behavior
 gsettings set org.gnome.desktop.interface enable-hot-corners false
 
+#Enable numlock
+gsettings set org.gnome.desktop.peripherals.keyboard numlock-state true
+
 #Setup Japanese input for Gnome via mozc and its dependencies
 sudo dnf install -y mozc ibus-mozc
 gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'mozc-on')]"
@@ -162,16 +165,18 @@ echo Copying firefox config from NAS to host, this may take a while.
 rm -rf ~/.mozilla
 rsync -ah --info=progress2 /mnt/nas/firefox/.mozilla ~/.mozilla
 # Check if the directory exists so we don't wipe out the backup
-if [ ! -d ~/.mozilla ]; then
-    echo "Error: Directory ~/.mozilla does not exist."
-    exit 1
+if [ -d ~/.mozilla ]; then
+    lsyncd -rsync ~/.mozilla /mnt/nas/firefox/.mozilla
+else
+    echo "Copying mozilla directory from the NAS has failed."
 fi
-lsyncd -rsync ~/.mozilla /mnt/nas/firefox/.mozilla
 
 #install apps
 #install and setup flatpaks
 echo Installing Flatseal
 sudo flatpak install flathub com.github.tchx84.Flatseal --noninteractive --system
+echo Installing Eye of Gnome
+flatpak install flathub org.gnome.eog --noninteractive --user
 echo Installing Discord
 flatpak install flathub com.discordapp.Discord --noninteractive --user
 echo Installing ExtensionManager
@@ -273,9 +278,9 @@ sudo bash -c "cat > /etc/fahclient/config.xml << EOT
 </config>
 EOT"
 
-
 #Remove unused apps
 sudo dnf remove -y libreoffice*
+sudo dnf remove -y loupe
 
 echo App configuration finished.
 ###############################################################################
