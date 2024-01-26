@@ -32,7 +32,7 @@ GRUB_DISABLE_SUBMENU='true'
 GRUB_ENABLE_BLSCFG='true'
 GRUB_TERMINAL_OUTPUT='console'
 GRUB_TIMEOUT='0'
-GRUB_CMDLINE_LINUX_DEFAULT='quiet splash'
+GRUB_CMDLINE_LINUX_DEFAULT='quiet splash rhgb nvidia-drm.modeset=1'
 GRUB_DISTRIBUTOR='Nobara Linux'
 GRUB_CMDLINE_LINUX='nofb net.ifnames=0'
 EOT"
