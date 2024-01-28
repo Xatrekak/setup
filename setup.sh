@@ -185,6 +185,9 @@ sudo dnf install -y ddcutil #needed for brightness-control-using-ddcutil
 #Install Gnome extension CLI installer
 pip install gnome-extensions-cli
 
+#Enable user extensions
+gsettings set org.gnome.shell disable-user-extensions false
+
 #install user gnome extensions
 <<extensions
 https://extensions.gnome.org/extension/307/dash-to-dock/
@@ -286,13 +289,17 @@ fi
 #Setup firefox.
 #link .mozzila on nas and profile
 echo Copying firefox config from NAS to host, this may take a while.
+echo "Closing all isntances of firefox. Do not open until finished"
+pkill firefox
+sleep 1
 rm -rf ~/.mozilla
 sleep 2
-rsync -ah --info=progress2 /mnt/nas/firefox/.mozilla ~/.mozilla
+rsync -ah --info=progress2 /mnt/nas/firefox/.mozilla ~/
 # Check if the directory exists so we don't wipe out the backup
 if [ "$disable_nas" = false ]; then
 if [ -d ~/.mozilla ]; then
-    systemctl enable --user --now lsyncd
+    systemctl start --user lsyncd
+    systemctl enable --user lsyncd
 else
     echo "Copying mozilla directory from the NAS has failed."
 fi
