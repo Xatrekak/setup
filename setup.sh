@@ -12,18 +12,20 @@ set +H
 show_help() {
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --amdgpu        Enable AMD GPU settings"
-    echo "  --nv_unstable   Use the unstable nvidia drivers"
-    echo "  --disable_nas   Copy files from NAS but don't setup back-syncing"
+    echo "  --amdgpu               Enable AMD GPU settings"
+    echo "  --nv_unstable          Use the unstable nvidia drivers"
+    echo "  --disable_nas          Copy files from NAS but don't setup back-syncing"
+    echo "  --singledisplay        Enable AMD GPU settings"
 }
 
 # Initialize variables for the options
 amdgpu=false
 nv_unstable=false
 disable_nas=false
+singledisplay=false
 
 # Use getopt to parse the options
-TEMP=$(getopt -o '' --long amdgpu,nv_unstable,help -n 'setup.sh' -- "$@")
+TEMP=$(getopt -o '' --long amdgpu,nv_unstable,singledisplay,help -n 'setup.sh' -- "$@")
 if [ $? != 0 ]; then
     show_help
     exit 1
@@ -44,6 +46,10 @@ while true; do
             ;;
         --disable_nas )
             disable_nas=true
+            shift
+            ;;
+        --singledisplay )
+            singledisplay=true
             shift
             ;;
         --help )
@@ -77,6 +83,12 @@ if [ "$disable_nas" = false ]; then
     echo "Enabling back sync to NAS."
 else
     echo "Copying files from NAS but not enabling back-sync."
+fi
+
+if [ "$singledisplay" = false ]; then
+    echo "Setting up shell for dual display."
+else
+    echo "Setting up shell for single display."
 fi
 
 ###############################################################################
@@ -216,6 +228,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock custom-background-color true
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock background-color 'rgb(145,65,172)'
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock background-opacity 0.30
+gsettings --schemadir ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas/ set org.gnome.shell.extensions.dash-to-dock intellihide-mode 'ALL_WINDOWS'
 #caffeine
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/caffeine\@patapon.info/schemas/ set org.gnome.shell.extensions.caffeine show-indicator 'always'
 #freon
@@ -232,6 +245,15 @@ alias mnt="mount | awk -F' ' '{ printf \"%s\\\t%s\\\n\", \\\$1, \\\$3; }' | colu
 alias gh='history|grep'
 alias cpv='rsync -ah --info=progress2'
 EOT
+
+#Setup monitors
+if [ "$singledisplay" = false ]; then
+git clone "https://gitlab.com/Oschowa/gnome-randr"
+mv gnome-randr /tmp/gnome-randr
+chmod +x /tmp/gnome-randr/gnome-randr.py
+/tmp/gnome-randr/gnome-randr.py --output DP-1 --mode 2560x1440 --rate 120
+/tmp/gnome-randr/gnome-randr.py --output HDMI-1 --mode 2560x1440 --rate 120 --primary
+fi
 
 echo Shell configuration finished.
 ###############################################################################
