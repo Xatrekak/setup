@@ -1,10 +1,89 @@
 #!/usr/bin/bash
-set +H #Disable history exspansion for our script
+###############################################################################
+#############################Script Setup######################################
+###############################################################################
+echo -e "Running script setup.\n"
+sleep 2
+
+#Disable history exspansion for our script
+set +H 
+
+# Function to show help/usage
+show_help() {
+    echo "Usage: $0 [options]"
+    echo "Options:"
+    echo "  --amdgpu        Enable AMD GPU settings"
+    echo "  --nv_unstable   Use the unstable nvidia drivers"
+    echo "  --disable_nas   Copy files from NAS but don't setup back-syncing"
+}
+
+# Initialize variables for the options
+amdgpu=false
+nv_unstable=false
+disable_nas=false
+
+# Use getopt to parse the options
+TEMP=$(getopt -o '' --long amdgpu,nv_unstable,help -n 'setup.sh' -- "$@")
+if [ $? != 0 ]; then
+    show_help
+    exit 1
+fi
+
+# Extract options and their arguments into variables.
+eval set -- "$TEMP"
+
+while true; do
+    case "$1" in
+        --amdgpu )
+            amdgpu=true
+            shift
+            ;;
+        --nv_unstable )
+            nv_unstable=true
+            shift
+            ;;
+        --disable_nas )
+            disable_nas=true
+            shift
+            ;;
+        --help )
+            show_help
+            exit 0
+            ;;
+        -- )
+            shift
+            break
+            ;;
+        * )
+            break
+            ;;
+    esac
+done
+
+# Now you can use the $amdgpu and $stable variables in if statements
+if [ "$amdgpu" = false ]; then
+    echo "Using default Nvidia configuration."
+else
+    echo "AMD GPU option selected."
+fi
+
+if [ "$nv_unstable" = false ]; then
+    echo "Stable configuration option selected."
+else
+    echo "Unstable Nvidia driver selected."
+fi
+
+if [ "$disable_nas" = false ]; then
+    echo "Enabling back sync to NAS."
+else
+    echo "Copying files from NAS but not enabling back-sync."
+fi
+
 ###############################################################################
 #############################System Configuration##############################
 ###############################################################################
-echo Beginning with system configuration.
-sleep 1
+echo -e "\nBegining with system configuration."
+sleep 3
 
 #audio setup
 # `pactl list short sinks` to get the output names for sink
@@ -21,8 +100,10 @@ sudo systemctl daemon-reload
 sudo mount /mnt/nas
 
 #Create symlink to libnvidia-ml.so.1 so t-rex miner can access NVML to monitor GPU
-sudo ln -s /usr/lib/libnvidia-ml.so.1 /usr/lib/libnvidia-ml.so
-sudo ln -s /usr/lib64/libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so
+if [ "$amdgpu" = false ]; then
+    sudo ln -s /usr/lib/libnvidia-ml.so.1 /usr/lib/libnvidia-ml.so
+    sudo ln -s /usr/lib64/libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so
+fi
 
 #revert back to unpredicatble kernerl interface names and set grub time to 0
 sudo bash -c "cat > /etc/default/grub << EOT
@@ -40,7 +121,7 @@ sleep 1
 sudo update-grub
 
 #Upgrade pip
-pip install --upgrade pip
+pip install --upgrade pip --quiet
 
 echo System configuration finished.
 ###############################################################################
@@ -156,19 +237,65 @@ echo Shell configuration finished.
 echo Beginning with app configuration.
 sleep 1
 
-#Install lsyncd for easy rysnc to nas
+#Install and setup lsyncd for easy rysnc to nas
+if [ "$disable_nas" = false ]; then
 sudo dnf install -y lsyncd
+mkdir -p ~/.local/state/lsyncd/
+touch ~/.local/state/lsyncd/lsyncd.log
+touch ~/.local/state/lsyncd/lsyncd.status
+sudo bash -c "cat > /etc/lsyncd.conf << EOT
+settings {
+   logfile    = \"$HOME/.local/state/lsyncd/lsyncd.log\",
+   statusFile = \"$HOME/.local/state/lsyncd/lsyncd.status\",
+   nodaemon   = false,
+}
+
+sync {
+    default.rsync,
+    source    = \"$HOME/.mozilla\",
+    target    = \"/mnt/nas/firefox/.mozilla\",
+    rsync     = {
+        archive  = true,    -- enables recursion and preserves almost everything
+        compress = false,    -- compresses data during the transfer
+        _extra   = {\"--delete\"} -- includes deletion of files in the target
+    }
+}
+EOT"
+mkdir -p ~/.config/systemd/user
+cat > ~/.config/systemd/user/lsyncd.service << EOT
+[Unit]
+Description=Live Syncing (Mirror) Daemon
+Documentation=man:lsyncd(1) file://usr/share/doc/lsyncd/README.md https://axkibe.github.io/lsyncd/
+After=network.target
+
+[Service]
+Type=simple
+Nice=19
+EnvironmentFile=-/etc/sysconfig/lsyncd
+ExecStart=/usr/bin/lsyncd -nodaemon \$LSYNCD_OPTIONS
+ExecReload=/bin/kill -HUP \$MAINPID
+Restart=always
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
+EOT
+fi
+
 
 #Setup firefox.
 #link .mozzila on nas and profile
 echo Copying firefox config from NAS to host, this may take a while.
 rm -rf ~/.mozilla
+sleep 2
 rsync -ah --info=progress2 /mnt/nas/firefox/.mozilla ~/.mozilla
 # Check if the directory exists so we don't wipe out the backup
+if [ "$disable_nas" = false ]; then
 if [ -d ~/.mozilla ]; then
-    lsyncd -rsync ~/.mozilla /mnt/nas/firefox/.mozilla
+    systemctl enable --user --now lsyncd
 else
     echo "Copying mozilla directory from the NAS has failed."
+fi
 fi
 
 #install apps
@@ -326,11 +453,13 @@ rm ~/.config/autostart/setup.sh
 EOT
 
 #Move to Nvidia new feature branch
+if [ "$nv_unstable" = true ]; then
 sudo dnf update nobara-repos --refresh
 sudo dnf4 config-manager --set-enabled nobara-nvidia-new-feature-39
 sudo dnf update -y --refresh
 sudo akmods
 sudo nobara-sync
+fi
 
 #Reboot the system.
 echo Configuration finished. Rebooing in: 
