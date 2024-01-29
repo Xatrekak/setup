@@ -294,7 +294,7 @@ Documentation=man:lsyncd(1) file://usr/share/doc/lsyncd/README.md https://axkibe
 After=network.target
 
 [Service]
-Type=simple
+Type=forking
 Nice=19
 EnvironmentFile=-/etc/sysconfig/lsyncd
 ExecStart=/usr/bin/lsyncd -nodaemon \$LSYNCD_OPTIONS
