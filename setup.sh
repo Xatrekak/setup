@@ -303,7 +303,7 @@ Restart=always
 SuccessExitStatus=143
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 EOT
 fi
 
