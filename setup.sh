@@ -236,6 +236,15 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii
 "['__average__', '__max__', 'NVIDIA GeForce RTX 3090', 'T_Sensor']"
 gsettings --schemadir ~/.local/share/gnome-shell/extensions/freon@UshakovVasilii_Github.yahoo.com/schemas set org.gnome.shell.extensions.freon use-gpu-nvidia true
 
+#Theme setup
+echo 'export GTK_THEME=Dracula' >> ~/.bash_profile
+mkdir ~/.themes
+wget -O /tmp/Dracula.zip https://github.com/dracula/gtk/archive/master.zip
+unzip /tmp/Dracula.zip -d ~/.themes
+mv ~/.themes/gtk-master/ ~/.themes/Dracula
+gsettings set org.gnome.desktop.interface gtk-theme "Dracula"
+gsettings set org.gnome.desktop.wm.preferences theme "Dracula"
+
 #Alias setup
 cat >> ~/.bashrc << EOT
 
